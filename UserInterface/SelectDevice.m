@@ -53,7 +53,7 @@ function SelectDevice_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to SelectDevice (see VARARGIN)
 
-refreshDeviceList();
+refreshDeviceList(handles);
 
 % Choose default command line output for SelectDevice
 handles.output = hObject;
@@ -109,11 +109,11 @@ function selectDevice_refresh_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-refreshDeviceList();
+refreshDeviceList(handles);
 
 end
 
-function refreshDeviceList()
+function refreshDeviceList(handles)
 
 % Retrieve all the devices.
 [cameraCounts, cameraSerials] = GetAvailableDevices();
