@@ -18,12 +18,12 @@ else
     % Initialize all the cameras.
     for index = 1:totalCameras
         % Note: Andor camera index starts from 0 instead of 1.
-        [~, handle] = GetCameraHandle(index-1);
-        if handle == 0
+        [~, retrievedHandle] = GetCameraHandle(index-1);
+        if retrievedHandle == 0
             continue
         end
-        cameraHandles{index} = handles;
-        SetCurrentCamera(handle);
+        cameraHandles{index} = retrievedHandle;
+        SetCurrentCamera(retrievedHandle);
         
         % Initialize the camera in order to get the serial number.
         ret = AndorInitialize(cameraFilePath);

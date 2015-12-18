@@ -12,7 +12,7 @@ CheckWarning(ret);
 ret = SetReadMode(4);
 CheckWarning(ret);
 
-ret = SetTrigerMode(10);
+ret = SetTriggerMode(10);
 CheckWarning(ret);
 useSoftwareTrigger = true;
 

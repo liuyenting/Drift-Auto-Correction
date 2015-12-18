@@ -65,7 +65,7 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 
 % Set the default image.
-panelAxis = axis('Parent', handles.frameView);
+panelAxis = axis(handles.frameView);
 defaultImage = imread('private/default_image.tiff');
 imshow(defaultImage);
 
