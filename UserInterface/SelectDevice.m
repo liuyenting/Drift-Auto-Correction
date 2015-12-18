@@ -22,7 +22,7 @@ function varargout = SelectDevice(varargin)
 
 % Edit the above text to modify the response to help SelectDevice
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 15:34:31
+% Last Modified by GUIDE v2.5 18-Dec-2015 17:44:08
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -62,7 +62,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes SelectDevice wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
+% uiwait(handles.SelectDevice);
 
 end
 
