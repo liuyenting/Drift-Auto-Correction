@@ -3,8 +3,6 @@ function [totalCameras, cameraSerials, cameraHandles] = GetAvailableDevices()
 %computer. 
 %   Detailed explanation goes here
 
-cameraFilePath = fullfile(matlabroot,'toolbox','Andor','Camera Files','atmcd64d.dll');
-
 [~, totalCameras] = GetAvailableCameras();
 % When totalCameras is 1, it actually means no device is connected.
 totalCameras = totalCameras-1;
@@ -26,7 +24,7 @@ else
         SetCurrentCamera(retrievedHandle);
         
         % Initialize the camera in order to get the serial number.
-        ret = AndorInitialize(cameraFilePath);
+        ret = AndorInitialize('');
         if ret ~= 20002
             continue
         end
