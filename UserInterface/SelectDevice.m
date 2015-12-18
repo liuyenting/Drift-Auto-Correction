@@ -65,6 +65,9 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+% Move the dialog to center of the screen.
+movegui(hObject, 'center');
+
 % UIWAIT makes SelectDevice wait for user response (see UIRESUME)
 uiwait(handles.SelectDevice);
 
@@ -144,17 +147,26 @@ function selectDevice_continue_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Retrieve the selection.
-cameraHandles = handles.cameraHandles;
 index = get(handles.deviceList, 'Value');
-handles.cameraHandle = cameraHandles{index};
+handles.cameraHandle = handles.cameraHandles{index};
 
 % Store selected camera handle.
 guidata(hObject, handles);
+
+StartCamera(handles);
 
 close(handles.SelectDevice);
 
 end
 
+function StartCamera(handles)
+
+cameraFilePath = fullfile(matlabroot, 'toolbox', 'Andor', 'Camera Files');
+SetCurrentCamera(handles.cameraHandle);
+ret = AndorInitialize('');
+CheckError(ret);
+
+end
 
 % --- Executes when user attempts to close SelectDevice.
 function SelectDevice_CloseRequestFcn(hObject, eventdata, handles)
