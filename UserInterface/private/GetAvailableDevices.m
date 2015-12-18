@@ -1,4 +1,4 @@
-function [totalCameras, list] = GetAvailableDevices()
+function [totalCameras, list] = GetAvailableDevices(handles)
 %GETAVAILABLEDEVICES Get available cameras that are connected to this
 %computer. 
 %   Detailed explanation goes here
@@ -13,6 +13,8 @@ if totalCameras <= 0
     list = 'No available camera';
 else
     list = cell(totalCameras, 1);
+    handles.cameraHandles = cell(totalCameras, 1);
+    
     % Initialize all the cameras.
     for index = 1:totalCameras
         % Note: Andor camera index starts from 0 instead of 1.
@@ -20,6 +22,7 @@ else
         if handle == 0
             continue
         end
+        handles.cameraHandles{index} = handles;
         SetCurrentCamera(handle);
         
         % Initialize the camera in order to get the serial number.
@@ -41,5 +44,8 @@ if isempty(list)
     totalCameras = 0;
     list = 'No available camera';
 end
+
+% Store the handles into the object.
+guidata(hObject, handles);
 
 end

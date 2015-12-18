@@ -53,7 +53,11 @@ function SelectDevice_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to SelectDevice (see VARARGIN)
 
-refreshDeviceList(handles);
+cameraHandles = refreshDeviceList(handles);
+
+% Store retrieved handles into handles.cameraHandles
+handles.cameraHandles = cameraHandles;
+guidata(hObject, handles);
 
 % Choose default command line output for SelectDevice
 handles.output = hObject;
@@ -109,14 +113,18 @@ function selectDevice_refresh_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-refreshDeviceList(handles);
+cameraHandles = refreshDeviceList(handles);
+
+% Store retrieved handles into handles.cameraHandles
+handles.cameraHandles = cameraHandles;
+guidata(hObject, handles);
 
 end
 
-function refreshDeviceList(handles)
+function cameraHandles = refreshDeviceList(handles)
 
 % Retrieve all the devices.
-[cameraCounts, cameraSerials] = GetAvailableDevices();
+[cameraCounts, cameraSerials, cameraHandles] = GetAvailableDevices();
 % ...populate them into the device list.
 set(handles.deviceList, 'String', cameraSerials);
 if cameraCounts == 0
@@ -132,5 +140,11 @@ function selectDevice_continue_Callback(hObject, eventdata, handles)
 % hObject    handle to selectDevice_continue (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% Activate the selected camera.
+cameraHandles = handles.cameraHandles;
+
+% Activate the live viewer.
+LiveViewer;
 
 end
