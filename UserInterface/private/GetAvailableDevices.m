@@ -1,4 +1,4 @@
-function [totalCameras, list] = GetAvailableDevices(handles)
+function [totalCameras, cameraSerials, cameraHandles] = GetAvailableDevices()
 %GETAVAILABLEDEVICES Get available cameras that are connected to this
 %computer. 
 %   Detailed explanation goes here
@@ -10,10 +10,10 @@ cameraFilePath = fullfile(matlabroot,'toolbox','Andor','Camera Files','atmcd64d.
 totalCameras = totalCameras-1;
 
 if totalCameras <= 0
-    list = 'No available camera';
+    cameraSerials = 'No available camera';
 else
-    list = cell(totalCameras, 1);
-    handles.cameraHandles = cell(totalCameras, 1);
+    cameraSerials = cell(totalCameras, 1);
+    cameraHandles = cell(totalCameras, 1);
     
     % Initialize all the cameras.
     for index = 1:totalCameras
@@ -22,7 +22,7 @@ else
         if handle == 0
             continue
         end
-        handles.cameraHandles{index} = handles;
+        cameraHandles{index} = handles;
         SetCurrentCamera(handle);
         
         % Initialize the camera in order to get the serial number.
@@ -33,19 +33,16 @@ else
 
         [~, serial] = GetCameraSerialNumber();
         if serial ~= 0
-            list{index} = num2str(serial);
+            cameraSerials{index} = num2str(serial);
         end
         
         AndorShutDown();
     end
 end
 
-if isempty(list)
+if isempty(cameraSerials)
     totalCameras = 0;
-    list = 'No available camera';
+    cameraSerials = 'No available camera';
 end
-
-% Store the handles into the object.
-guidata(hObject, handles);
 
 end

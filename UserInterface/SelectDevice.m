@@ -141,8 +141,17 @@ function selectDevice_continue_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Activate the selected camera.
+% Retrieve the selection.
 cameraHandles = handles.cameraHandles;
+index = get(handles.deviceList, 'Value');
+handles.cameraHandle = cameraHandles{index};
+
+% Store selected camera handle.
+guidata(hObject, handles);
+
+% Activate the camera.
+SetCurrentCamera(handles.cameraHandle);
+AndorInitialize('');
 
 % Activate the live viewer.
 LiveViewer;
