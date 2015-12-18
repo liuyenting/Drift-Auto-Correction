@@ -121,6 +121,8 @@ function refreshDeviceList(handles)
 set(handles.deviceList, 'String', cameraSerials);
 if cameraCounts == 0
     set(handles.deviceList, 'enable', 'off');
+else
+    set(handles.deviceList, 'enable', 'on');
 end
 
 end
