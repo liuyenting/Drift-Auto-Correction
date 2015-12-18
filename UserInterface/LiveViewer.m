@@ -53,6 +53,7 @@ function LiveViewer_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to LiveViewer (see VARARGIN)
 
+handles.cameraHandle = integer(varargin{1});
 [handles.xPixels, handles.yPixels, handles.useSoftwareTrigger] = CameraDefaultInit();
 
 % Set compensation default state.
