@@ -53,7 +53,9 @@ function LiveViewer_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to LiveViewer (see VARARGIN)
 
-handles.cameraHandle = integer(varargin{1});
+handles.cameraHandle = int32(varargin{1});
+startCamera(handles);
+
 [handles.xPixels, handles.yPixels, handles.useSoftwareTrigger] = CameraDefaultInit();
 
 % Set compensation default state.
@@ -69,7 +71,7 @@ guidata(hObject, handles);
 % uiwait(handles.figure1);
 
 % Set the default image.
-panelAxis = axis(handles.frameView);
+axis(handles.frameView);
 defaultImage = imread('private/default_image.tiff');
 imshow(defaultImage);
 
@@ -118,6 +120,14 @@ else
     handles.isCompensating = true;
     % TODO: Start the camera.
 end
+
+end
+
+function startCamera(handles)
+
+SetCurrentCamera(handles.cameraHandle);
+ret = AndorInitialize('');
+CheckError(ret);
 
 end
 
