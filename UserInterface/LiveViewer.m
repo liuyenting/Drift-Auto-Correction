@@ -22,7 +22,7 @@ function varargout = LiveViewer(varargin)
 
 % Edit the above text to modify the response to help LiveViewer
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 17:56:26
+% Last Modified by GUIDE v2.5 18-Dec-2015 18:28:52
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -53,6 +53,8 @@ function LiveViewer_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to LiveViewer (see VARARGIN)
 
+[handles.xPixels, handles.yPixels, handles.useSoftwareTrigger] = CameraDefaultInit();
+
 % Choose default command line output for LiveViewer
 handles.output = hObject;
 
@@ -61,6 +63,11 @@ guidata(hObject, handles);
 
 % UIWAIT makes LiveViewer wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
+
+% Set the default image.
+panelAxis = axis('Parent', handles.frameView);
+defaultImage = imread('private/default_image.tiff');
+imshow(defaultImage);
 
 end
 

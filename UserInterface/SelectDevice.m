@@ -151,7 +151,8 @@ guidata(hObject, handles);
 
 % Activate the camera.
 SetCurrentCamera(handles.cameraHandle);
-AndorInitialize('');
+ret = AndorInitialize('');
+% TODO: Identify the return value as the final defense of the init routine.
 
 % Activate the live viewer.
 LiveViewer;
