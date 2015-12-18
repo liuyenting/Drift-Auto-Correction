@@ -22,7 +22,7 @@ function varargout = LiveViewer(varargin)
 
 % Edit the above text to modify the response to help LiveViewer
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 19:54:47
+% Last Modified by GUIDE v2.5 18-Dec-2015 20:39:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,7 +54,6 @@ function LiveViewer_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to LiveViewer (see VARARGIN)
 
 handles.cameraHandle = int32(varargin{1});
-
 [handles.xPixels, handles.yPixels, handles.useSoftwareTrigger] = CameraDefaultInit();
 
 % Set state variables.
