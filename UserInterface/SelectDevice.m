@@ -155,6 +155,9 @@ ret = AndorInitialize('');
 % TODO: Identify the return value as the final defense of the init routine.
 
 % Activate the live viewer.
-LiveViewer;
+LiveViewer(handles);
+
+% Close this dialog.
+delete(handles.SelectDevice);
 
 end
