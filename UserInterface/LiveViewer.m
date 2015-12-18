@@ -22,7 +22,7 @@ function varargout = LiveViewer(varargin)
 
 % Edit the above text to modify the response to help LiveViewer
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 18:28:52
+% Last Modified by GUIDE v2.5 18-Dec-2015 19:54:47
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,11 +54,11 @@ function LiveViewer_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to LiveViewer (see VARARGIN)
 
 handles.cameraHandle = int32(varargin{1});
-startCamera(handles);
 
 [handles.xPixels, handles.yPixels, handles.useSoftwareTrigger] = CameraDefaultInit();
 
-% Set compensation default state.
+% Set state variables.
+handles.isStreaming = true;
 handles.isCompensating = false;
 
 % Choose default command line output for LiveViewer
@@ -67,11 +67,14 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+% Move the window to the center of the screen.
+movegui(hObject, 'center');
+
 % UIWAIT makes LiveViewer wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 % Set the default image.
-axis(handles.frameView);
+axis(handles.frameView, 'image');
 defaultImage = imread('private/default_image.tiff');
 imshow(defaultImage);
 
@@ -123,10 +126,11 @@ end
 
 end
 
-function startCamera(handles)
+function StartCamera(handles)
 
+cameraFilePath = fullfile(matlabroot, 'toolbox', 'Andor', 'Camera Files');
 SetCurrentCamera(handles.cameraHandle);
-ret = AndorInitialize('');
+ret = AndorInitialize(cameraFilePath);
 CheckError(ret);
 
 end
@@ -142,5 +146,44 @@ CheckWarning(ret);
 
 ret = AndorShutDown();
 CheckWarning(ret);
+
+end
+
+
+% --- Executes on button press in toggleStream.
+function toggleStream_Callback(hObject, eventdata, handles)
+% hObject    handle to toggleStream (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of toggleStream
+
+[ret] = StartAcquisition();                   
+CheckWarning(ret);
+
+axesInfo = get(handles.frameView, 'Position');
+width = axesInfo(3);
+height = axesInfo(4);
+
+while get(hObject, 'Value')
+    if handles.useSoftwareTrigger == true
+        ret = SendSoftwareTrigger();
+        CheckWarning(ret);
+        
+        ret = WaitForAcquisition();
+        CheckWarning(ret);
+    end
+    
+    [ret, imageData] = GetMostRecentImage(handles.xPixels * handles.yPixels);
+    CheckWarning(ret);
+    
+    if ret == atmcd.DRV_SUCCESS
+        %display the acquired image
+        newImage = flipdim(transpose(reshape(imageData, handles.xPixels, handles.yPixels)), 1);
+        %newImage = imresize(newImage, [width, height]);
+        imagesc(newImage);
+        drawnow;
+    end
+end
 
 end
