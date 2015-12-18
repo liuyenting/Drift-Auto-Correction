@@ -22,7 +22,7 @@ function varargout = SelectDevice(varargin)
 
 % Edit the above text to modify the response to help SelectDevice
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 19:01:29
+% Last Modified by GUIDE v2.5 18-Dec-2015 19:22:51
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -66,7 +66,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes SelectDevice wait for user response (see UIRESUME)
-%uiwait(handles.SelectDevice);
+uiwait(handles.SelectDevice);
 
 end
 
@@ -79,6 +79,8 @@ function varargout = SelectDevice_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.cameraHandle;
+
+delete(handles.SelectDevice);
 
 end
 
@@ -150,5 +152,22 @@ handles.cameraHandle = cameraHandles{index};
 guidata(hObject, handles);
 
 close(handles.SelectDevice);
+
+end
+
+
+% --- Executes when user attempts to close SelectDevice.
+function SelectDevice_CloseRequestFcn(hObject, eventdata, handles)
+% hObject    handle to SelectDevice (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if isequal(get(hObject, 'waitstatus'), 'waiting')
+    % The GUI is still in UIWAIT, us UIRESUME
+    uiresume(hObject);
+else
+    % The GUI is no longer waiting, just close it
+    delete(hObject);
+end
 
 end
