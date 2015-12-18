@@ -22,7 +22,7 @@ function varargout = SelectDevice(varargin)
 
 % Edit the above text to modify the response to help SelectDevice
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 17:44:08
+% Last Modified by GUIDE v2.5 18-Dec-2015 19:01:29
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -66,7 +66,7 @@ handles.output = hObject;
 guidata(hObject, handles);
 
 % UIWAIT makes SelectDevice wait for user response (see UIRESUME)
-% uiwait(handles.SelectDevice);
+%uiwait(handles.SelectDevice);
 
 end
 
@@ -78,7 +78,7 @@ function varargout = SelectDevice_OutputFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Get default command line output from handles structure
-varargout{1} = handles.output;
+varargout{1} = handles.cameraHandle;
 
 end
 
@@ -149,15 +149,6 @@ handles.cameraHandle = cameraHandles{index};
 % Store selected camera handle.
 guidata(hObject, handles);
 
-% Activate the camera.
-SetCurrentCamera(handles.cameraHandle);
-ret = AndorInitialize('');
-% TODO: Identify the return value as the final defense of the init routine.
-
-% Activate the live viewer.
-LiveViewer(handles);
-
-% Close this dialog.
-delete(handles.SelectDevice);
+close(handles.SelectDevice);
 
 end

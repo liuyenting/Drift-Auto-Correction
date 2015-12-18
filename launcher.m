@@ -4,4 +4,5 @@ addpath('./CameraControl');
 addpath('./Analysis');
 
 % Initiate the program.
-SelectDevice;
+cameraHandle = SelectDevice();
+disp(num2str(cameraHandle));

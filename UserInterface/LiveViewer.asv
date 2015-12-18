@@ -55,9 +55,7 @@ function LiveViewer_OpeningFcn(hObject, eventdata, handles, varargin)
 
 [handles.xPixels, handles.yPixels, handles.useSoftwareTrigger] = CameraDefaultInit();
 
-% Set compensation default state.
-handles.isCompensating = false;
-
+% Set compensation de
 % Choose default command line output for LiveViewer
 handles.output = hObject;
 
@@ -110,17 +108,10 @@ function toggleCompensation_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of toggleCompensation
 
-if handles.isCompensating
-    handles.isCompensating = false;
-    StopCamera();
-else
-    handles.isCompensating = true;
-    % TODO: Start the camera.
+if 
 end
 
-end
-
-function StopCamera()
+function CloseCamera()
 
 ret = AbortAcquisition();
 CheckWarning(ret);
