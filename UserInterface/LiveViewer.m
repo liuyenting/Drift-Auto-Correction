@@ -178,7 +178,7 @@ while get(hObject, 'Value')
     
     if ret == atmcd.DRV_SUCCESS
         %display the acquired image
-        newImage = flipdim(transpose(reshape(imageData, handles.xPixels, handles.yPixels)), 1);
+        newImage = flip(transpose(reshape(imageData, handles.xPixels, handles.yPixels)), 1);
         %newImage = imresize(newImage, [width, height]);
         imagesc(newImage);
         drawnow;
