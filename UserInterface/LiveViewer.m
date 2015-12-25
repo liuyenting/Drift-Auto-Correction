@@ -22,7 +22,7 @@ function varargout = LiveViewer(varargin)
 
 % Edit the above text to modify the response to help LiveViewer
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 20:39:11
+% Last Modified by GUIDE v2.5 25-Dec-2015 15:29:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -63,9 +63,6 @@ handles.isCompensating = false;
 % Choose default command line output for LiveViewer
 handles.output = hObject;
 
-% Update handles structure
-guidata(hObject, handles);
-
 % Move the window to the center of the screen.
 movegui(hObject, 'center');
 
@@ -73,9 +70,16 @@ movegui(hObject, 'center');
 % uiwait(handles.figure1);
 
 % Set the default image.
-axis(handles.frameView, 'image', 'off');
+axis(handles.frameView, 'image');
 defaultImage = imread('private/default_image.tiff');
 imshow(defaultImage);
+handles.roi = [];
+
+handles.isSelecting = false;
+handles.isCompensating = false;
+
+% Update handles structure
+guidata(hObject, handles);
 
 end
 
@@ -96,6 +100,15 @@ function selectTargets_Callback(hObject, eventdata, handles)
 % hObject    handle to selectTargets (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if get(hObject, 'Value')
+    % Clear the rectangles on the axes.
+    handles.roi = [];
+    handles.isSelecting = true;
+else
+    % Finish selection, lock in the rectangles.
+    handles.isSelecting = false;
+end
 
 end
 
@@ -148,7 +161,6 @@ CheckWarning(ret);
 
 end
 
-
 % --- Executes on button press in toggleStream.
 function toggleStream_Callback(hObject, eventdata, handles)
 % hObject    handle to toggleStream (see GCBO)
@@ -173,16 +185,54 @@ while get(hObject, 'Value')
         CheckWarning(ret);
     end
     
-    [ret, imageData] = GetMostRecentImage(handles.xPixels * handles.yPixels);
+    [ret, imageData] = GetMostRecentImage16(handles.xPixels * handles.yPixels);
     CheckWarning(ret);
     
     if ret == atmcd.DRV_SUCCESS
         %display the acquired image
-        newImage = flip(transpose(reshape(imageData, handles.xPixels, handles.yPixels)), 1);
+        newImage = flipdim(transpose(reshape(imageData, handles.xPixels, handles.yPixels)), 1);
         %newImage = imresize(newImage, [width, height]);
-        imagesc(newImage);
+
+        im = imagesc(newImage);
+        axis off;
+        hold on;
+        for rect = handles.roi'
+            point1 = rect(1:2);
+            point2 = rect(3:4);
+            rectangle('Position', [point1(1), point1(2), point2(1)-point1(1), point2(2)-point1(2)], ...
+                      'FaceColor', 'none', ...
+                      'EdgeColor', 'yellow');
+        end
+        
+        %the button doen fcn will not work until the image hit test is off
+        set(im, 'HitTest', 'off');
+
+        %now set an image button doen fcn
+        set(im, 'ButtonDownFcn', @(hObject,eventdata) LiveViewer('frameView_ButtonDownFcn', hObject, eventdata, guidata(hObject)))
+
+        %the image funtion will not fire until hit test is turned on
+        set(im, 'HitTest', 'on'); %now image button function will work
+        
         drawnow;
     end
+end
+
+end
+
+% --- Executes on mouse press over axes background.
+function frameView_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to frameView (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if handles.isSelecting || true
+    % Start of the rectangle...
+    point1 = get(handles.frameView, 'CurrentPoint');
+    rbbox;
+    % ... end of the rectangle.
+    point2 = get(hObject, 'CurrentPoint');
+    
+    handles.roi = [handles.roi; point1, point2];
 end
 
 end

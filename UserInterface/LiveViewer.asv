@@ -22,7 +22,7 @@ function varargout = LiveViewer(varargin)
 
 % Edit the above text to modify the response to help LiveViewer
 
-% Last Modified by GUIDE v2.5 18-Dec-2015 19:54:47
+% Last Modified by GUIDE v2.5 25-Dec-2015 15:29:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,7 +54,6 @@ function LiveViewer_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to LiveViewer (see VARARGIN)
 
 handles.cameraHandle = int32(varargin{1});
-
 [handles.xPixels, handles.yPixels, handles.useSoftwareTrigger] = CameraDefaultInit();
 
 % Set state variables.
@@ -97,6 +96,15 @@ function selectTargets_Callback(hObject, eventdata, handles)
 % hObject    handle to selectTargets (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+if get(hObject, 'Value')
+    % Clear the rectangles on the axes.
+    handles.roi = [];
+    handles.isSelecting = true;
+else
+    % Finish selection, lock in the rectangles.
+    handles.isSelecting = false;
+end
 
 end
 
@@ -149,7 +157,6 @@ CheckWarning(ret);
 
 end
 
-
 % --- Executes on button press in toggleStream.
 function toggleStream_Callback(hObject, eventdata, handles)
 % hObject    handle to toggleStream (see GCBO)
@@ -161,7 +168,9 @@ function toggleStream_Callback(hObject, eventdata, handles)
 [ret] = StartAcquisition();                   
 CheckWarning(ret);
 
-[~ , ~, width, height] = get(handles.frameView, 'Position');
+axesInfo = get(handles.frameView, 'Position');
+width = axesInfo(3);
+height = axesInfo(4);
 
 while get(hObject, 'Value')
     if handles.useSoftwareTrigger == true
@@ -172,16 +181,45 @@ while get(hObject, 'Value')
         CheckWarning(ret);
     end
     
-    [ret, imageData] = GetMostRecentImage(handles.xPixels * handles.yPixels);
+    [ret, imageData] = GetMostRecentImage16(handles.xPixels * handles.yPixels);
     CheckWarning(ret);
     
     if ret == atmcd.DRV_SUCCESS
         %display the acquired image
         newImage = flipdim(transpose(reshape(imageData, handles.xPixels, handles.yPixels)), 1);
-        newImage = imresize(newImage, [width, height]);
+        %newImage = imresize(newImage, [width, height]);
+
         imagesc(newImage);
+        axis off;
+        hold on;
+        for rect = handles.roi'
+            point1 = rect(1:2);
+            point2 = rect(3:4);
+            rectangle('Position', [point1(1), point1(2), point2(1)-point1(1), point2(2)-point1(2)], ...
+                      'FaceColor', 'none', ...
+                      'EdgeColor', 'yellow');
+        end
+        
         drawnow;
     end
+end
+
+end
+
+% --- Executes on mouse press over axes background.
+function frameView_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to frameView (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if handles.isSelecting
+    % Start of the rectangle...
+    point1 = get(hObject, 'CurrentPoint');
+    rbbox;
+    % ... end of the rectangle.
+    point2 = get(hObject, 'CurrentPoint');
+    
+    handles.roi = [handles.roi; point1, point2];
 end
 
 end
