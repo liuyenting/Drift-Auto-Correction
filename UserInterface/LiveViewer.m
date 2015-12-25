@@ -73,7 +73,7 @@ movegui(hObject, 'center');
 % uiwait(handles.figure1);
 
 % Set the default image.
-axis(handles.frameView, 'image');
+axis(handles.frameView, 'image', 'off');
 defaultImage = imread('private/default_image.tiff');
 imshow(defaultImage);
 
